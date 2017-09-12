@@ -30,12 +30,12 @@ import {drawTextCentered, drawTextWrapped} from "./textWriter";
 import {SpeechBubbleDrawable} from "./SpeechBubbleDrawable";
 import {SwitchDrawable} from "./SwitchDrawable";
 import {initRenderingContext} from "./gfx";
+import {FaceDrawable} from "./FaceDrawable";
 
 // todo: fix crossing entities
 // todo: improve handling of chained effects
 // todo: ghosts should not kill ghosts
 // todo: ghosts should not push boxes
-
 // todo: spears should go up and down in sync with moves
 
 // todo: use metrics to size speech bubble
@@ -44,7 +44,6 @@ import {initRenderingContext} from "./gfx";
 // todo: collision for patrol and ping-pong
 
 // todo: death animation
-// todo: game over screen
 
 // todo: load / save game
 // todo: instructions
@@ -59,8 +58,9 @@ enum GameState {
     TITLE, LEVEL
 }
 
-let gameState: GameState = GameState.LEVEL;
-let currentLevel = 7;
+let gameState: GameState = GameState.TITLE;
+let currentLevel = 0;
+let markedDead = false;
 
 const [canvas, ctx] = initRenderingContext();
 
@@ -115,6 +115,9 @@ let fadeTo = "next";
 let fade = 0;
 let deltaFade = 0;
 let turn = 0;
+let move = 0;
+let restarts = 0;
+let marbles = 0;
 
 const SPRITE = "sprite";
 
@@ -169,6 +172,21 @@ interface BoxComponent extends Component {
 
 const SWITCH = "switch";
 interface SwitchComponent extends Component {
+    entity: number;
+}
+
+const SAW = "saw";
+interface SawComponent extends Component {
+    entity: number;
+}
+
+const EYE = "eye";
+interface EyeComponent extends Component {
+    entity: number;
+}
+
+const MOUTH = "mouth";
+interface MouthComponent extends Component {
     entity: number;
 }
 
@@ -232,6 +250,7 @@ function spawnCrossFire(x: number, y: number) {
 }
 
 function initLevel(level: number): [TileMap, Checkers] {
+    markedDead = false;
     turn = 0;
     room = rooms[level];
     tileMap = generateRoom(room.width, room.height, tileSize);
@@ -251,6 +270,14 @@ function initLevel(level: number): [TileMap, Checkers] {
             addComponent(crate, SPRITE, new SwitchDrawable(0, 0, tileSize));
             addComponent(crate, SWITCH, {});
             addComponent(crate, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
+        });
+    }
+
+    if (room.items.faces) {
+        room.items.faces.forEach((b: any) => {
+            const face = createEntity();
+            addComponent(face, SPRITE, new FaceDrawable(0, 0, tileSize));
+            addComponent(face, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
         });
     }
 
@@ -353,6 +380,7 @@ function initLevel(level: number): [TileMap, Checkers] {
             addComponent(saw, SPRITE, new SawBladeDrawable(0, 0, tileSize));
             addComponent(saw, COLLIDER, { event: "slice" });
             addComponent(saw, SPATIAL, { x: spec.x1 * tileSize, y: spec.y1 * tileSize });
+            addComponent(saw, SAW, {});
             addComponent(saw, PINGPONG, {
                 x1: spec.x1 * tileSize,
                 y1: spec.y1 * tileSize,
@@ -371,6 +399,7 @@ function initLevel(level: number): [TileMap, Checkers] {
             addComponent(eye, SPRITE, new EyeDrawable(0, 0, tileSize, player));
             addComponent(eye, COLLIDER, { event: "slide" });
             addComponent(eye, SPATIAL, { x: spec.x * tileSize, y: spec.y * tileSize });
+            addComponent(eye, EYE, {});
         });
     }
 
@@ -380,6 +409,7 @@ function initLevel(level: number): [TileMap, Checkers] {
             addComponent(mouth, SPRITE, new MouthDrawable(0, 0, tileSize));
             addComponent(mouth, COLLIDER, { event: "slide" });
             addComponent(mouth, SPATIAL, { x: spec.x * tileSize, y: spec.y * tileSize });
+            addComponent(mouth, MOUTH, {});
         });
     }
 
@@ -400,6 +430,9 @@ subscribe("nextLevelFadeOut", (topic, message) => {
 });
 
 subscribe("restartLevel", (topic, message) => {
+    if (deltaFade === 0) {
+        restarts++;
+    }
     fadeTo = "current";
     deltaFade = 0.1;
 });
@@ -553,6 +586,7 @@ function handleCollisions(entityId: number, neighbourPos: Point, dir: Move) {
                         destroyEntity(idx);
                         pickupPlayer.play();
                         speak("I feel slightly better now.");
+                        marbles++;
                         break;
 
                     case "block":
@@ -752,6 +786,7 @@ function update() {
     } else {
         if (nextMove !== Move.NONE && deltaFade === 0) {
             turn++;
+            move++;
             handlePlayerMove();
             handleEnemyMoves();
             handleObjectMoves();
@@ -872,27 +907,70 @@ function update() {
         }
     });
 
-    const atExit = room.items.exits.find(
-        (x: Point) => collides(player, { x: x.x * tileSize + 0.5 * tileSize, y: x.y * tileSize + 0.5 * tileSize})
-    );
+    if (room.items.exits) {
+        const atExit = room.items.exits.find(
+            (x: Point) => collides(player, { x: x.x * tileSize + 0.5 * tileSize, y: x.y * tileSize + 0.5 * tileSize})
+        );
 
-    if (atExit) {
-        publish("nextLevelFadeOut", {});
+        if (atExit) {
+            publish("nextLevelFadeOut", {});
+        }
+
+        let blockedExit = false;
+        room.items.exits.forEach((exit: Point) => {
+            getComponentList(COLLIDER).forEach((collider: ColliderComponent) => {
+                const pos = getComponent(collider.entity, SPATIAL) as SpatialComponent;
+                if (collides(pos, { x: exit.x * tileSize, y: exit.y * tileSize})) {
+                    blockedExit = true;
+                }
+            });
+        });
+
+        if (blockedExit) {
+            speak("I'm trapped! Press R key to restart room");
+        }
     }
 
-    let blockedExit = false;
-    room.items.exits.forEach((exit: Point) => {
-        getComponentList(COLLIDER).forEach((collider: ColliderComponent) => {
-            const pos = getComponent(collider.entity, SPATIAL) as SpatialComponent;
-            if (collides(pos, { x: exit.x * tileSize, y: exit.y * tileSize})) {
-                blockedExit = true;
+    if (room.items.faces) {
+        let inPlace = 0;
+
+        getComponentList(EYE).forEach((e: EyeComponent) => {
+            let component = getComponent(e.entity, SPATIAL);
+            if (collides(component, { x: 4 * tileSize, y: 3 * tileSize})) {
+                inPlace++;
+            }
+            if (collides(component, { x: 6 * tileSize, y: 3 * tileSize})) {
+                inPlace++;
             }
         });
-    });
 
-    if (blockedExit) {
-        speak("I'm trapped! Press R key to restart room");
+        getComponentList(MOUTH).forEach((m: MouthComponent) => {
+            let component = getComponent(m.entity, SPATIAL);
+            if (collides(component, { x: 5 * tileSize, y: 5 * tileSize})) {
+                inPlace++;
+            }
+        });
+
+        if (inPlace === 3) {
+            let destroyCount = 0;
+            getComponentList(HOVER).forEach((m: Component) => {
+                destroyEntity(m.entity);
+                destroyCount++;
+            });
+            if (destroyCount > 0) {
+                speak("Hooraay! I have restored my sanity! End of Game 🎉");
+            }
+        }
     }
+
+    getComponentList(SAW).forEach((b) => {
+        const sawComponent = b as SawComponent;
+        const bombPos = getComponent(sawComponent.entity, SPRITE) as Point;
+        if (collides(bombPos, player)) {
+            emitBlood(player);
+            publish("restartLevel", {});
+        }
+    });
 
     fade += deltaFade;
     if (deltaFade > 0.01 && fade >= Math.PI) {
@@ -902,11 +980,12 @@ function update() {
         initLevel(currentLevel);
         fade = Math.PI;
         deltaFade = -deltaFade;
+        particles.length = 0;
     } else if (deltaFade < 0 && fade <= 0) {
         fade = 0;
         deltaFade = 0;
         fadeTo = "next";
-        nextMove = Move.NONE
+        nextMove = Move.NONE;
     }
 
     playerGhost.x = player.x;
@@ -928,11 +1007,13 @@ function render() {
     playerGhost.draw(ctx);
 
     drawParticles(ctx, particles);
-
     ctx.restore();
 
     ctx.fillStyle = `rgba(0,0,0,${Math.cos(fade + Math.PI) * 0.5 + 0.5}`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#fff";
+    drawTextCentered(ctx, `Level: ${currentLevel + 1} - Move: ${move} - Restarts: ${restarts} - Marbles: ${marbles}`, 350);
 
     // const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0,
     //     canvas.width / 2, canvas.height / 2, canvas.width / 2);

@@ -155,7 +155,7 @@ export const rooms: RoomSpec[] = [
         ],
         items: {
             boxes: [
-                { x: 3, y: 3 }, { x: 2, y: 2 }, { x: 3, y: 1 }
+                { x: 3, y: 3 }, { x: 2, y: 2 }, { x: 2, y: 1 }
             ],
             switches: [
                 { x: 1, y: 1 }, { x: 2, y: 1 }, { x: 3, y: 1 }
@@ -228,53 +228,90 @@ export const rooms: RoomSpec[] = [
     },
 
 
-    // 6
     {
-        width: 12, height: 9,
+        width: 10, height: 8,
         playerX: 1, playerY: 1,
         walls: [
-            2, 1, 2, 2, 2, 3,
-            3, 3, 5, 3
+            4, 6, 6, 6, 2, 5, 6, 5, 7, 5,
+            1, 3, 3, 3, 4, 3, 5, 3, 6, 3, 8, 3
         ],
         items: {
-            exits: [ {x: 11, y: 5} ],
-            ghosts: [
-                { x: 7, y: 3, facing: 0}
+            marbles: [
+                { x: 7, y: 6 }
             ],
             boxes: [
-                { x: 3, y: 6 }
+                { x: 2, y: 2 }
             ],
-            bombs: [
-                { x: 3, y: 4 }
+            switches: [
+                { x: 6, y: 4 }
             ],
             levers: [
-                { x: 10, y: 7 },
-                { x: 9, y: 6 }
+                { x: 5, y: 2 }
             ],
             doors: [
-                { x: 8, y: 5 }
+                { x: 5, y: 6, type: "horizontal", lockType: "marble" },
+                { x: 2, y: 3, type: "horizontal", lockType: "invertedLever" },
+                { x: 7, y: 3, type: "horizontal", lockType: "lever" },
+                { x: 8, y: 5, type: "horizontal", lockType: "switch" }
             ],
-            marbles: [
-                { x: 3, y: 1 }
-            ],
-            spikes: [
-                { x: 1, y: 5 }
-            ],
-            saws: [
-                { x1: 2, y1: 5, x2: 4, y2: 5 },
-                { x1: 7, y1: 5, x2: 5, y2: 5 }
-            ],
+            exits: [ {x: 5, y: 7} ],
             eyes: [
-                { x: 7, y: 2 }, { x: 9, y: 2 }
-            ],
-            mouths: [
-                { x: 8, y: 3 }
+                { x: 4, y: -1 },
+                { x: 6, y: -1 }
             ]
         },
         events: [
             {
                 turn: 0, event: "speak",
-                text: "I always feel like somebody's watching me."
+                text: "I always feel like somebody's watching me 🎵"
+            }
+        ]
+    },
+
+    {
+        width: 9, height: 6,
+        playerX: 1, playerY: 1,
+        walls: [
+            5, 4, 7, 4,
+            4, 1, 2, 3
+        ],
+        items: {
+            exits: [ { x: 6, y: 5} ],
+            boxes: [ { x: 3, y: 2}, { x: 3, y: 3}, { x: 5, y: 3 } ],
+            switches: [ { x : 1, y: 3 }],
+            marbles: [],
+            doors: [ { x: 6, y: 4, type: "horizontal", lockType: "switch" }]
+        },
+        events: [
+        ]
+    },
+
+    // 6
+    {
+        width: 12, height: 9,
+        playerX: 1, playerY: 1,
+        walls: [
+        ],
+        items: {
+            ghosts: [
+                { x: 2, y: 3, facing: 1},
+                { x: 9, y: 6, facing: 0},
+                { x: 5, y: 7, facing: -1}
+            ],
+            faces: [
+                { x: 5, y: 4 }
+            ],
+            eyes: [
+                { x: 5, y: 2 }, { x: 6, y: 4 }
+            ],
+            mouths: [
+                { x: 4, y: 4 }
+            ]
+        },
+        events: [
+            {
+                turn: 0, event: "speak",
+                text: "That face does not look right"
             }
         ]
     },
