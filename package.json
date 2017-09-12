@@ -1,0 +1,44 @@
+{
+  "name": "rhm-js13k-2017",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server",
+    "build": "webpack -p",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "keywords": [],
+  "author": "Rene Hangstrup Møller <rhmoller@gmail.com> (http://giddyplanet.com/)",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/jest": "^20.0.7",
+    "html-webpack-plugin": "^2.30.1",
+    "jest": "^20.0.4",
+    "ts-jest": "^20.0.10",
+    "ts-loader": "^2.3.2",
+    "tslint": "^5.7.0",
+    "tslint-loader": "^3.5.3",
+    "typescript": "^2.4.2",
+    "webpack": "^3.5.4",
+    "webpack-dev-server": "^2.7.1",
+    "zip-webpack-plugin": "^2.0.0"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "json"
+    ]
+  },
+  "dependencies": {
+    "jsfxr": "0.0.1",
+    "preact": "^8.2.1"
+  }
+}
