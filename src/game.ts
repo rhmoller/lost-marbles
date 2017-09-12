@@ -60,7 +60,7 @@ enum GameState {
 }
 
 let gameState: GameState = GameState.LEVEL;
-let currentLevel = 0;
+let currentLevel = 7;
 
 const [canvas, ctx] = initRenderingContext();
 

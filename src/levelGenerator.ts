@@ -168,6 +168,37 @@ export const rooms: RoomSpec[] = [
     },
 
     {
+        width: 8, height: 7,
+        playerX: 1, playerY: 2,
+        walls: [
+            1, 4, 2, 4, 3, 4, 5, 4, 3, 3, 2, 1,
+            5, 1, 5, 2
+        ],
+        items: {
+            exits: [ {x: 1, y: 6} ],
+            switches: [],
+            boxes: [
+            ],
+            levers: [
+
+            ],
+            doors: [
+                { x: 2, y: 5, lockType: "marble" }
+            ],
+            saws: [
+                { x1: 4, y1: 3, x2: 6, y2: 3 }
+            ],
+            marbles: [
+                { x: 6, y: 1 }
+            ]
+        },
+        events: [
+        ]
+
+    },
+
+
+    {
         width: 10, height: 9,
         playerX: 1, playerY: 4,
         walls: [
