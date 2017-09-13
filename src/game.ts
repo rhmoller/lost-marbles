@@ -31,6 +31,9 @@ import {SpeechBubbleDrawable} from "./SpeechBubbleDrawable";
 import {SwitchDrawable} from "./SwitchDrawable";
 import {initRenderingContext} from "./gfx";
 import {FaceDrawable} from "./FaceDrawable";
+import {addPolyfills} from "./polyfill";
+
+addPolyfills();
 
 // todo: fix crossing entities
 // todo: improve handling of chained effects
@@ -58,7 +61,7 @@ enum GameState {
     TITLE, LEVEL
 }
 
-let gameState: GameState = GameState.TITLE;
+let gameState: GameState = GameState.LEVEL;
 let currentLevel = 0;
 let markedDead = false;
 
@@ -1009,20 +1012,19 @@ function render() {
     drawParticles(ctx, particles);
     ctx.restore();
 
-    ctx.fillStyle = `rgba(0,0,0,${Math.cos(fade + Math.PI) * 0.5 + 0.5}`;
+    ctx.fillStyle = `rgba(0,0,0,${Math.cos(fade + Math.PI) * 0.5 + 0.5})`;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
+    //
     ctx.fillStyle = "#fff";
     drawTextCentered(ctx, `Level: ${currentLevel + 1} - Move: ${move} - Restarts: ${restarts} - Marbles: ${marbles}`, 350);
 
-    // const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0,
-    //     canvas.width / 2, canvas.height / 2, canvas.width / 2);
-    // gradient.addColorStop(0, `rgba(0,0,0,0)`);
-    // gradient.addColorStop(1, "rgba(0,0,0,.2)");
-    //
-    // ctx.fillStyle = gradient;
-    // ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0,
+        canvas.width / 2, canvas.height / 2, canvas.width / 2);
+    gradient.addColorStop(0, `rgba(0,0,0,0)`);
+    gradient.addColorStop(1, "rgba(0,0,0,.2)");
 
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
 function updateTitle() {
