@@ -298,7 +298,7 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.exits.forEach((e: any) => {
             tileMap.set(e.x, e.y, 0);
             const exit = createEntity();
-            const dir = e.x === room.width - 1 ? "right" : "down";
+            const dir: "right" | "down" = (e.x === room.width - 1) ? "right" : "down";
             addComponent(exit, SPRITE, new ExitDrawable(e.x * tileSize, e.y * tileSize, tileSize, dir));
         });
     }
@@ -1016,7 +1016,7 @@ function render() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     //
     ctx.fillStyle = "#fff";
-    drawTextCentered(ctx, `Level: ${currentLevel + 1} - Move: ${move} - Restarts: ${restarts} - Marbles: ${marbles}`, 350);
+    drawTextCentered(ctx, `Level: ${currentLevel + 1} - Move: ${move} - Restarts: ${restarts} - Marbles: ${marbles}`, 330);
 
     const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0,
         canvas.width / 2, canvas.height / 2, canvas.width / 2);
