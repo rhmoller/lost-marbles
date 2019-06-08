@@ -14,13 +14,13 @@ interface Registry {
 
 let registry: Registry = {};
 
-export function getComponentList(componentType: string) {
+export function getComponentList<T>(componentType: string): T[] {
     let list = registry[componentType];
     if (!list) {
         list = [];
         registry[componentType] = list;
     }
-    return list;
+    return list as any as T[];
 }
 
 export function addComponent(entity: number, componentType: string, component: object) {

@@ -90,14 +90,14 @@ const pickupPlayer = new Audio();
 pickupPlayer.src = pickupSndUrl;
 
 enum Move {
-  NONE, LEFT, UP, RIGHT, DOWN
+    NONE, LEFT, UP, RIGHT, DOWN
 }
 
 let nextMove: Move = Move.NONE;
 
 const tileSize = 35;
 
-const player = { x: tileSize * 5, y: tileSize * 5, facing: 0 };
+const player = {x: tileSize * 5, y: tileSize * 5, facing: 0};
 const particles: Particle[] = [];
 
 const tweens: Tween[] = [];
@@ -109,6 +109,7 @@ let [tileMap, checkers] = initLevel(currentLevel);
 const playerGhost = new GhostDrawable(0, 0, 0, 1, "#000", "#fff");
 
 const SPATIAL = "spatial";
+
 interface SpatialComponent extends Component {
     x: number;
     y: number;
@@ -125,6 +126,7 @@ let marbles = 0;
 const SPRITE = "sprite";
 
 const BLINK = "blink";
+
 interface BlinkComponent extends Component {
     period: number;
     cutoff: number;
@@ -132,73 +134,87 @@ interface BlinkComponent extends Component {
 }
 
 const COLLIDER = "collider";
+
 interface ColliderComponent extends Component {
     entity: number;
     event: string;
 }
 
 const HOVER = "hover";
+
 interface HoverComponent extends Component {
     period: number;
 }
 
 const AI = "ai";
+
 interface AiComponent extends Component {
     pattern: string;
 }
 
 const BOMB = "bomb";
+
 interface BombComponent extends Component {
     ttl: number;
     entity: number;
 }
 
 const FIRE = "fire";
+
 interface FireComponent extends Component {
     r: number;
 }
 
 const DOOR = "door";
+
 interface DoorComponent extends Component {
     entity: number;
 }
 
 const MARBLE = "marble";
+
 interface MarbleComponent extends Component {
     entity: number;
 }
 
 const BOX = "box";
+
 interface BoxComponent extends Component {
     entity: number;
 }
 
 const SWITCH = "switch";
+
 interface SwitchComponent extends Component {
     entity: number;
 }
 
 const SAW = "saw";
+
 interface SawComponent extends Component {
     entity: number;
 }
 
 const EYE = "eye";
+
 interface EyeComponent extends Component {
     entity: number;
 }
 
 const MOUTH = "mouth";
+
 interface MouthComponent extends Component {
     entity: number;
 }
 
 const LEVER = "lever";
+
 interface LeverComponent extends Component {
     entity: number;
 }
 
 const PINGPONG = "pingpong";
+
 interface PingPongComponent extends Component {
     steps: number;
     delta: number;
@@ -210,6 +226,7 @@ interface PingPongComponent extends Component {
 }
 
 const SPEECH = "speech";
+
 interface SpeechComponent extends Component {
     entity: number;
     fadeAfterTurn: number;
@@ -230,9 +247,9 @@ function emitFire(x: number, y: number) {
 
     const fire = createEntity();
     addComponent(fire, SPRITE, new FireDrawable(0, 0, tileSize, 1));
-    addComponent(fire, COLLIDER, { event: "kill"});
-    addComponent(fire, SPATIAL, { x, y });
-    addComponent(fire, FIRE, { r: 1.5 });
+    addComponent(fire, COLLIDER, {event: "kill"});
+    addComponent(fire, SPATIAL, {x, y});
+    addComponent(fire, FIRE, {r: 1.5});
     return true;
 }
 
@@ -272,7 +289,7 @@ function initLevel(level: number): [TileMap, Checkers] {
             const crate = createEntity();
             addComponent(crate, SPRITE, new SwitchDrawable(0, 0, tileSize));
             addComponent(crate, SWITCH, {});
-            addComponent(crate, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
+            addComponent(crate, SPATIAL, {x: b.x * tileSize, y: b.y * tileSize});
         });
     }
 
@@ -280,7 +297,7 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.faces.forEach((b: any) => {
             const face = createEntity();
             addComponent(face, SPRITE, new FaceDrawable(0, 0, tileSize));
-            addComponent(face, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
+            addComponent(face, SPATIAL, {x: b.x * tileSize, y: b.y * tileSize});
         });
     }
 
@@ -288,9 +305,9 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.boxes.forEach((b: any) => {
             const crate = createEntity();
             addComponent(crate, SPRITE, new CrateDrawable(0, 0, tileSize));
-            addComponent(crate, COLLIDER, { event: "slide" });
+            addComponent(crate, COLLIDER, {event: "slide"});
             addComponent(crate, BOX, {});
-            addComponent(crate, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
+            addComponent(crate, SPATIAL, {x: b.x * tileSize, y: b.y * tileSize});
         });
     }
 
@@ -308,14 +325,14 @@ function initLevel(level: number): [TileMap, Checkers] {
             const id = createEntity();
             const drawable = new GhostDrawable(0, 0, 0, 1, "#fff", "#000");
             addComponent(id, SPRITE, drawable);
-            addComponent(id, HOVER, { period: 0.005 + Math.random() * 0.004 });
-            addComponent(id, COLLIDER, { event: "kill"});
+            addComponent(id, HOVER, {period: 0.005 + Math.random() * 0.004});
+            addComponent(id, COLLIDER, {event: "kill"});
             addComponent(id, SPATIAL, {
                 x: ghost.x * tileSize,
                 y: ghost.y * tileSize,
                 facing: ghost.facing
             });
-            addComponent(id, AI, { pattern: "scatter" });
+            addComponent(id, AI, {pattern: "scatter"});
         });
     }
 
@@ -323,9 +340,9 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.bombs.forEach((b: any) => {
             const bomb = createEntity();
             addComponent(bomb, SPRITE, new BombDrawable(0, 0, tileSize));
-            addComponent(bomb, COLLIDER, { event: "slide" });
-            addComponent(bomb, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
-            addComponent(bomb, BOMB, { ttl: 5, entity: bomb });
+            addComponent(bomb, COLLIDER, {event: "slide"});
+            addComponent(bomb, SPATIAL, {x: b.x * tileSize, y: b.y * tileSize});
+            addComponent(bomb, BOMB, {ttl: 5, entity: bomb});
         });
     }
 
@@ -333,10 +350,10 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.marbles.forEach((b: any) => {
             const marbleId = createEntity();
             const sprite = new MarbleDrawable(0, 0, tileSize);
-            addComponent(marbleId, SPATIAL, { x: b.x * tileSize, y: b.y * tileSize });
+            addComponent(marbleId, SPATIAL, {x: b.x * tileSize, y: b.y * tileSize});
             addComponent(marbleId, SPRITE, sprite);
             addComponent(marbleId, MARBLE, {});
-            addComponent(marbleId, COLLIDER, { event: "pickup" });
+            addComponent(marbleId, COLLIDER, {event: "pickup"});
         });
     }
 
@@ -352,9 +369,9 @@ function initLevel(level: number): [TileMap, Checkers] {
                 inverted: spec.inverted || false
             });
             addComponent(leverId, SPRITE, sprite);
-            addComponent(leverId, COLLIDER, { event: "toggle"});
-            addComponent(leverId, BLINK, { period: 400, cutoff: 200, on: false });
-            addComponent(leverId, LEVER, { entity: leverId });
+            addComponent(leverId, COLLIDER, {event: "toggle"});
+            addComponent(leverId, BLINK, {period: 400, cutoff: 200, on: false});
+            addComponent(leverId, LEVER, {entity: leverId});
         });
     }
 
@@ -362,9 +379,9 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.doors.forEach((spec: any) => {
             const door = createEntity();
             addComponent(door, SPRITE, new DoorDrawable(0, 0, tileSize, spec.type, spec.lockType));
-            addComponent(door, COLLIDER, { event: "block" });
-            addComponent(door, SPATIAL, { x: spec.x * tileSize, y: spec.y * tileSize });
-            addComponent(door, DOOR, { entity: door });
+            addComponent(door, COLLIDER, {event: "block"});
+            addComponent(door, SPATIAL, {x: spec.x * tileSize, y: spec.y * tileSize});
+            addComponent(door, DOOR, {entity: door});
         });
     }
 
@@ -372,8 +389,8 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.spikes.forEach((spec: any) => {
             const spikes = createEntity();
             addComponent(spikes, SPRITE, new SpikesDrawable(0, 0, tileSize));
-            addComponent(spikes, COLLIDER, { event: "slice" });
-            addComponent(spikes, SPATIAL, { x: spec.x * tileSize, y: spec.y * tileSize });
+            addComponent(spikes, COLLIDER, {event: "slice"});
+            addComponent(spikes, SPATIAL, {x: spec.x * tileSize, y: spec.y * tileSize});
         });
     }
 
@@ -381,8 +398,8 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.saws.forEach((spec: any) => {
             const saw = createEntity();
             addComponent(saw, SPRITE, new SawBladeDrawable(0, 0, tileSize));
-            addComponent(saw, COLLIDER, { event: "slice" });
-            addComponent(saw, SPATIAL, { x: spec.x1 * tileSize, y: spec.y1 * tileSize });
+            addComponent(saw, COLLIDER, {event: "slice"});
+            addComponent(saw, SPATIAL, {x: spec.x1 * tileSize, y: spec.y1 * tileSize});
             addComponent(saw, SAW, {});
             addComponent(saw, PINGPONG, {
                 x1: spec.x1 * tileSize,
@@ -400,8 +417,8 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.eyes.forEach((spec: any) => {
             const eye = createEntity();
             addComponent(eye, SPRITE, new EyeDrawable(0, 0, tileSize, player));
-            addComponent(eye, COLLIDER, { event: "slide" });
-            addComponent(eye, SPATIAL, { x: spec.x * tileSize, y: spec.y * tileSize });
+            addComponent(eye, COLLIDER, {event: "slide"});
+            addComponent(eye, SPATIAL, {x: spec.x * tileSize, y: spec.y * tileSize});
             addComponent(eye, EYE, {});
         });
     }
@@ -410,8 +427,8 @@ function initLevel(level: number): [TileMap, Checkers] {
         room.items.mouths.forEach((spec: any) => {
             const mouth = createEntity();
             addComponent(mouth, SPRITE, new MouthDrawable(0, 0, tileSize));
-            addComponent(mouth, COLLIDER, { event: "slide" });
-            addComponent(mouth, SPATIAL, { x: spec.x * tileSize, y: spec.y * tileSize });
+            addComponent(mouth, COLLIDER, {event: "slide"});
+            addComponent(mouth, SPATIAL, {x: spec.x * tileSize, y: spec.y * tileSize});
             addComponent(mouth, MOUTH, {});
         });
     }
@@ -446,7 +463,7 @@ subscribe("move", (topic, message) => {
 
 subscribe("move", (topic, message) => {
     nextMove = (message as any).move;
-    getComponentList("bomb").forEach((b: BombComponent) => {
+    getComponentList<BombComponent>("bomb").forEach((b: BombComponent) => {
         b.ttl--;
         const p = getComponent(b.entity, SPRITE) as BombDrawable;
         if (b.ttl < 1) {
@@ -461,13 +478,13 @@ subscribe("move", (topic, message) => {
 function getNeighbourTile(pos: Point, dir: Move, step: number): Point {
     switch (dir) {
         case Move.LEFT:
-            return { x: pos.x - step, y: pos.y };
+            return {x: pos.x - step, y: pos.y};
         case Move.UP:
-            return { x: pos.x, y: pos.y - step };
+            return {x: pos.x, y: pos.y - step};
         case Move.RIGHT:
-            return { x: pos.x + step, y: pos.y };
+            return {x: pos.x + step, y: pos.y};
         case Move.DOWN:
-            return { x: pos.x, y: pos.y + step };
+            return {x: pos.x, y: pos.y + step};
         default:
             return pos;
     }
@@ -488,7 +505,7 @@ function tweenToNeighbour(pos: Point, dir: Move, step: number, type: TweenType) 
 function getTileAtPixelPos(pos: Point) {
     const tx = ((pos.x) / tileSize) | 0;
     const ty = ((pos.y) / tileSize) | 0;
-    if (tx  < 0 || ty < 0 || tx >= tileMap.width || ty >= tileMap.height) {
+    if (tx < 0 || ty < 0 || tx >= tileMap.width || ty >= tileMap.height) {
         return -1;
     }
     return tileMap.get(tx, ty);
@@ -568,7 +585,7 @@ function emitBlood(source: Point) {
 
 function handleCollisions(entityId: number, neighbourPos: Point, dir: Move) {
     let collide = false;
-    getComponentList(COLLIDER).forEach((collider: ColliderComponent, idx: number) => {
+    getComponentList<ColliderComponent>(COLLIDER).forEach((collider: ColliderComponent, idx: number) => {
         if (idx !== entityId) {
             const spatial = getComponent(idx, SPATIAL) as SpatialComponent;
             const entityCollides = collides(neighbourPos, spatial);
@@ -611,7 +628,7 @@ function handleCollisions(entityId: number, neighbourPos: Point, dir: Move) {
                         const nextFree = getTileAtPixelPos(nextPos) === 0;
                         // todo: tidy up
                         if (nextFree) {
-                            const nextHit: any = getComponentList(COLLIDER).filter(
+                            const nextHit: any = getComponentList<ColliderComponent>(COLLIDER).filter(
                                 (value) => value !== undefined).find(
                                 (nextCollider: ColliderComponent) => {
                                     const nextBounds = getComponent(nextCollider.entity, SPATIAL) as Pawn;
@@ -731,7 +748,7 @@ function handleEnemyMoves() {
 }
 
 function handleObjectMoves() {
-    getComponentList(PINGPONG).forEach((pingpong: PingPongComponent) => {
+    getComponentList<PingPongComponent>(PINGPONG).forEach((pingpong: PingPongComponent) => {
         const entity = pingpong.entity;
         const spatial = getComponent(entity, SPATIAL) as SpatialComponent;
 
@@ -746,8 +763,8 @@ function handleObjectMoves() {
         tweens.push({
             type: TweenType.LINEAR,
             item: spatial,
-            from: {x: spatial.x, y: spatial.y },
-            to: {x: tx , y: ty },
+            from: {x: spatial.x, y: spatial.y},
+            to: {x: tx, y: ty},
             t: 0
         });
 
@@ -797,7 +814,7 @@ function update() {
         }
     }
 
-    getComponentList(SPEECH).forEach((speech: SpeechComponent) => {
+    getComponentList<SpeechComponent>(SPEECH).forEach((speech: SpeechComponent) => {
         const entity = speech.entity;
         const sprite = getComponent(entity, SPRITE);
         if (speech.fadeAfterTurn <= turn) {
@@ -813,18 +830,18 @@ function update() {
         sprite.y = playerGhost.y;
     });
 
-    getComponentList(SPATIAL).forEach((spatial: SpatialComponent) => {
+    getComponentList<SpatialComponent>(SPATIAL).forEach((spatial: SpatialComponent) => {
         const sprite = getComponent(spatial.entity, SPRITE) as Pawn;
         sprite.x = spatial.x;
         sprite.y = spatial.y;
     });
 
-    getComponentList(HOVER).forEach((hover: HoverComponent, idx) => {
+    getComponentList<HoverComponent>(HOVER).forEach((hover: HoverComponent, idx) => {
         const sprite = getComponent(idx, SPRITE) as GhostDrawable;
         sprite.z = Math.cos(timer.time * hover.period);
     });
 
-    getComponentList(BLINK).forEach((blink: BlinkComponent, idx: number) => {
+    getComponentList<BlinkComponent>(BLINK).forEach((blink: BlinkComponent, idx: number) => {
         (getComponent(idx, SPRITE) as any).on = blink.on && (timer.time % blink.period) > blink.cutoff;
     });
 
@@ -833,14 +850,14 @@ function update() {
             const bombComponent = b as BombComponent;
             const bombPos = getComponent(bombComponent.entity, SPRITE) as Point;
             if (bombPos) {
-                emitSmoke({ x: bombPos.x + tileSize * 0.3, y: bombPos.y - tileSize * 0.3 });
+                emitSmoke({x: bombPos.x + tileSize * 0.3, y: bombPos.y - tileSize * 0.3});
             }
         });
     }
 
     updateParticles(particles);
 
-    getComponentList(FIRE).forEach((fire: FireComponent, idx) => {
+    getComponentList<FireComponent>(FIRE).forEach((fire: FireComponent, idx) => {
         const d = getComponent(idx, SPRITE) as FireDrawable;
         fire.r *= 0.92;
         d.r = fire.r;
@@ -850,7 +867,7 @@ function update() {
     });
 
     let activatedLeverCount = 0;
-    const levers = getComponentList(LEVER).filter((value) => value !== undefined);
+    const levers = getComponentList<LeverComponent>(LEVER).filter((value) => value !== undefined);
     levers.forEach((leverComponent: LeverComponent) => {
         const blinkComponent = getComponent(leverComponent.entity, BLINK) as BlinkComponent;
         if (blinkComponent.on) {
@@ -859,11 +876,11 @@ function update() {
     });
 
     let activatedSwitchCount = 0;
-    const switches = getComponentList(SWITCH).filter((value) => value !== undefined);
+    const switches = getComponentList<SwitchComponent>(SWITCH).filter((value) => value !== undefined);
     switches.forEach((switchComponent: SwitchComponent) => {
         const spatial = getComponent(switchComponent.entity, SPATIAL);
         let hit = false;
-        getComponentList(BOX).filter((value) => value !== undefined).forEach((box: BoxComponent) => {
+        getComponentList<BoxComponent>(BOX).filter((value) => value !== undefined).forEach((box: BoxComponent) => {
             if (collides(spatial, getComponent(box.entity, SPATIAL))) {
                 hit = true;
             }
@@ -873,7 +890,7 @@ function update() {
         }
     });
 
-    getComponentList(DOOR).forEach((doorComponent: DoorComponent) => {
+    getComponentList<DoorComponent>(DOOR).forEach((doorComponent: DoorComponent) => {
         const door = doorComponent.entity;
         const drawable = getComponent(door, SPRITE) as DoorDrawable;
         const before = drawable.open;
@@ -912,7 +929,7 @@ function update() {
 
     if (room.items.exits) {
         const atExit = room.items.exits.find(
-            (x: Point) => collides(player, { x: x.x * tileSize + 0.5 * tileSize, y: x.y * tileSize + 0.5 * tileSize})
+            (x: Point) => collides(player, {x: x.x * tileSize + 0.5 * tileSize, y: x.y * tileSize + 0.5 * tileSize})
         );
 
         if (atExit) {
@@ -921,9 +938,9 @@ function update() {
 
         let blockedExit = false;
         room.items.exits.forEach((exit: Point) => {
-            getComponentList(COLLIDER).forEach((collider: ColliderComponent) => {
+            getComponentList<ColliderComponent>(COLLIDER).forEach((collider: ColliderComponent) => {
                 const pos = getComponent(collider.entity, SPATIAL) as SpatialComponent;
-                if (collides(pos, { x: exit.x * tileSize, y: exit.y * tileSize})) {
+                if (collides(pos, {x: exit.x * tileSize, y: exit.y * tileSize})) {
                     blockedExit = true;
                 }
             });
@@ -937,26 +954,26 @@ function update() {
     if (room.items.faces) {
         let inPlace = 0;
 
-        getComponentList(EYE).forEach((e: EyeComponent) => {
-            let component = getComponent(e.entity, SPATIAL);
-            if (collides(component, { x: 4 * tileSize, y: 3 * tileSize})) {
+        getComponentList<EyeComponent>(EYE).forEach((e: EyeComponent) => {
+            const component = getComponent(e.entity, SPATIAL);
+            if (collides(component, {x: 4 * tileSize, y: 3 * tileSize})) {
                 inPlace++;
             }
-            if (collides(component, { x: 6 * tileSize, y: 3 * tileSize})) {
+            if (collides(component, {x: 6 * tileSize, y: 3 * tileSize})) {
                 inPlace++;
             }
         });
 
-        getComponentList(MOUTH).forEach((m: MouthComponent) => {
-            let component = getComponent(m.entity, SPATIAL);
-            if (collides(component, { x: 5 * tileSize, y: 5 * tileSize})) {
+        getComponentList<MouthComponent>(MOUTH).forEach((m: MouthComponent) => {
+            const component = getComponent(m.entity, SPATIAL);
+            if (collides(component, {x: 5 * tileSize, y: 5 * tileSize})) {
                 inPlace++;
             }
         });
 
         if (inPlace === 3) {
             let destroyCount = 0;
-            getComponentList(HOVER).forEach((m: Component) => {
+            getComponentList<Component>(HOVER).forEach((m: Component) => {
                 destroyEntity(m.entity);
                 destroyCount++;
             });
@@ -1004,7 +1021,7 @@ function render() {
     checkers.draw(ctx);
     tileMap.draw(ctx);
 
-    const sprites = getComponentList(SPRITE);
+    const sprites = getComponentList<Drawable>(SPRITE);
     sprites.forEach((sprite: Drawable) => sprite.draw(ctx));
 
     playerGhost.draw(ctx);
@@ -1016,11 +1033,12 @@ function render() {
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     //
     ctx.fillStyle = "#fff";
-    drawTextCentered(ctx, `Level: ${currentLevel + 1} - Move: ${move} - Restarts: ${restarts} - Marbles: ${marbles}`, 330);
+    drawTextCentered(ctx,
+        `Level: ${currentLevel + 1} - Move: ${move} - Restarts: ${restarts} - Marbles: ${marbles}`, 330);
 
     const gradient = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, 0,
         canvas.width / 2, canvas.height / 2, canvas.width / 2);
-    gradient.addColorStop(0, `rgba(0,0,0,0)`);
+    gradient.addColorStop(0, `rgba(0, 0, 0, 0)`);
     gradient.addColorStop(1, "rgba(0,0,0,.2)");
 
     ctx.fillStyle = gradient;
@@ -1084,6 +1102,7 @@ function renderTitle() {
 
     ctx.font = "12px cursive";
     drawTextCentered(ctx, "A game by Rene Hangstrup Møller", 115);
+    // @ts-ignore
     if (!(document.fullscreenElement || document.webkitFullscreenElement || (document as any).msFullscreenElement)) {
         drawTextCentered(ctx, "Press F to enter full screen", 350);
     }
@@ -1117,23 +1136,23 @@ window.addEventListener("keyup", (e) => {
         case 37: // left
         case 65: // a
         case 81: // q
-            publish("move", { move: Move.LEFT });
+            publish("move", {move: Move.LEFT});
             e.preventDefault();
             break;
         case 38: // up
         case 87: // w
         case 90: // z
-            publish("move", { move: Move.UP });
+            publish("move", {move: Move.UP});
             e.preventDefault();
             break;
         case 39:
         case 68:
-            publish("move", { move: Move.RIGHT });
+            publish("move", {move: Move.RIGHT});
             e.preventDefault();
             break;
         case 40:
         case 83:
-            publish("move", { move: Move.DOWN });
+            publish("move", {move: Move.DOWN});
             e.preventDefault();
             break;
         case 82:
@@ -1146,10 +1165,14 @@ window.addEventListener("keyup", (e) => {
             const stage = document.getElementById("stage") as HTMLElement;
             if (stage.requestFullscreen) {
                 stage.requestFullscreen();
-            } else if (stage.webkitRequestFullScreen) {
-                stage.webkitRequestFullScreen();
-            } else if ((stage as any).msRequestFullcreen) {
-                (stage as any).msRequestFullscreen();
+            } else {
+                // @ts-ignore
+                if (stage.webkitRequestFullScreen) {
+                    // @ts-ignore
+                    stage.webkitRequestFullScreen();
+                } else if ((stage as any).msRequestFullcreen) {
+                    (stage as any).msRequestFullscreen();
+                }
             }
             break;
         case 13:
@@ -1171,7 +1194,7 @@ document.addEventListener("fullscreenchange", (e) => {
 
     // const stage = document.getElementById("stage") as HTMLElement;
     canvas.style.transformOrigin = "0 0";
-    canvas.style.transform =  `scale(${scaleToFit},${scaleToFit})`;
+    canvas.style.transform = `scale(${scaleToFit},${scaleToFit})`;
 }, false);
 
 window.addEventListener("resize", (e) => {
@@ -1181,5 +1204,5 @@ window.addEventListener("resize", (e) => {
 
     // const stage = document.getElementById("stage") as HTMLElement;
     canvas.style.transformOrigin = "0 0";
-    canvas.style.transform =  `scale(${scaleToFit},${scaleToFit})`;
+    canvas.style.transform = `scale(${scaleToFit},${scaleToFit})`;
 }, false);
