@@ -38,9 +38,10 @@ module.exports = {
         })
     ],
     devServer: {
-        overlay: true,
+        client: {
+            overlay: true
+        },
         host: "0.0.0.0",
-        allowedHosts: ["."],
-        disableHostCheck: true
+        allowedHosts: "all"
     }
 };
